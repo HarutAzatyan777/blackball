@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap');
+
+.footer {
+  background-image: url('../../../public/Images/footer-bg.jpg'); /* ✅ Ճիշտ ուղի public պանակի համար */
+  background-size: cover;
+  background-position: center;
+  padding: 6rem 1rem;
+  color: #fff;
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 140%;
+  letter-spacing: 0%;
+  position: relative;
+
+  max-width: 800px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.footer-overlay {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.footer-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 2rem;
+}
+
+.footer-section {
+  flex: 1 1 200px;
+  min-width: 180px;
+}
+
+.footer-section h3 {
+  font-size: 16px;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+.footer-section p {
+  margin: 0.3rem 0;
+}
+
+/* Mobile styles */
+@media (max-width: 600px) {
+  .footer {
+    width: 100%;
+    padding: 0;
+    font-size: 12px;
+    max-width: 100%;
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .footer-section {
+    min-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .footer-section h3 {
+    font-size: 14px;
+  }
+}

@@ -1,0 +1,64 @@
+/* Nav-ն սկսում է իր սովորական դիրքով */
+.qr-nav {
+  position: sticky;
+  top: 0;                       /* Երբ սքրոլլ անի, կպնի վերևին */
+  z-index: 999;
+  
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  /* border-bottom: 2px solid #000000; */
+  padding: 0.5rem 1rem;
+  
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  background-color: #ffffff91;    /* Կամ թափանցիկ, եթե ուզում ես */
+}
+/* .qr-nav-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;             
+  gap: 0.5rem;
+  min-width: max-content;        
+  font-family: 'Special Gothic Expanded One', sans-serif;
+} */
+
+.qr-nav-buttons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;              /* ✅ Մի գիծում թողնում ենք */
+  gap: 0.5rem;
+  min-width: max-content;         /* ✅ Չկտրվի */
+  font-family: 'Special Gothic Expanded One', sans-serif;
+}
+
+.qr-nav-button {
+  background-color: #000000;
+  color: #ffffff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 0.3s;
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  white-space: nowrap;           /* ✅ Թույլ չի տալիս բառակտում */
+  flex-shrink: 0;                /* ✅ Չփոքրանա scroll-ի պատճառով */
+}
+
+.qr-nav-button:hover {
+
+ background-color: black;
+  color: #ffffff;
+}
+
+/* ----- Active Button ----- */
+
+.qr-nav-button.active {
+  background-color: rgba(0, 0, 0, 0.637);
+  color: #ffffff;
+ 
+}

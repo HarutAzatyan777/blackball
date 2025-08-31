@@ -1,0 +1,383 @@
+/* QrMenuPage.css */
+
+/* ----- Base styles (Starbucks inspired) ----- */
+@import url('https://fonts.googleapis.com/css2?family=Special+Gothic+Expanded+One&display=swap');
+
+.qr-menu-section h3,
+.qr-menu-item-line,
+.qr-menu-info,
+.empty-state,
+.loader {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+}
+
+/* Եթե ուզում ես նաև փոքրիկ տեքստերին՝ */
+.qr-menu-item-text,
+.item-name-block,
+.item-name-en,
+.item-name-hy {
+  font-family: 'Special Gothic Expanded One', sans-serif;
+}
+.qr-menu-hero {
+  height: 620px;
+  background: url("../../public/bg.png") no-repeat center center;
+  background-size: cover;
+  padding: 40px 0;
+  text-align: center;
+}
+
+/* .menu-logo {
+  width: 140px;
+  border-radius: 8px;
+} */
+
+.qr-menu-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 0.1rem 0.1rem;
+  font-family: 'Special Gothic Expanded One', sans-serif;;
+  color: #1e3932; /* Starbucks dark green */
+  background: #FFFFFF /* warm craft-paper look */
+}
+
+.qr-menu-page p{
+  padding: 2rem 1rem;
+}
+
+.menu-title {
+  display: flex;
+  flex-direction: column; /* լոգոն և տեքստը մեկը մյուսի տակ */
+  align-items: center;     /* ուղղահայաց կենտրոնացում */
+  justify-content: center; /* հորիզոնական կենտրոնացում */
+  gap: 0.5rem;
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: rgb(121, 107, 107);
+  font-family: 'Special Gothic Expanded One', sans-serif;
+  text-align: center;      /* եթե տեքստը մի քանի տող է */
+}
+
+.menu-logo {
+  width: 60px;
+  height: auto;
+  display: block;  /* ապահովում է որ img-ն լինի block մակարդակի */
+  margin: 0 auto;  /* ապահովում է, որ img-ն լիներ կենտրոնում, եթե flex չլիներ */
+
+}
+
+/* ----- Loader ----- */
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 150px;
+  font-size: 1.2rem;
+  color: #4b615c;
+}
+
+.loader::before {
+  content: "";
+  width: 40px;
+  height: 40px;
+  border: 4px solid #a8b8b0;
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 10px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ----- Empty state ----- */
+
+.empty-state {
+  text-align: center;
+  font-style: italic;
+  color: #6f837a;
+  margin-top: 2rem;
+}
+.after-first-category-text {
+
+  margin-top: 20px;
+  margin-bottom: 40px;
+
+  font-size: 16px;
+  color: #222;
+  text-align: flex-start;
+  line-height: 1.7;
+
+ 
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.after-first-category-text svg {
+  flex-shrink: 0;
+  margin-right: 10px;
+  margin-top: 3px;
+}
+.after-first-category-text img {
+  width:100%;
+  height: 100%;
+  object-fit: contain;
+  /* margin-right: 10px;
+  margin-top: 2px; */
+}
+
+
+/* ----- Menu Sections ----- */
+
+.qr-menu-section {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px #0000000A;
+  padding: 10px;
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeIn 0.5s forwards;
+}
+
+.qr-menu-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* հեռավորություն տեքստի ու նկարի միջև */
+  min-height: 40px; /* ֆիքսված բարձրություն տողի */
+}
+
+.qr-menu-section h3 {
+  font-weight: 400;
+  font-style: normal;
+  font-size: 25px;
+  line-height: 120%;
+  letter-spacing: 0;
+  margin: 0;
+  color: black;
+  flex-shrink: 0;
+}
+
+.qr-menu-section-title img {
+  max-height: 25px;
+  width: auto;
+  flex-shrink: 0;
+  display: block;
+}
+
+
+/* ----- Menu Items ----- */.qr-menu-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.qr-menu-item {
+  background: #FFFFFF;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e6ebe9;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.qr-menu-item:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.qr-menu-item img {
+  width: 100%;
+
+  object-fit: cover;
+  border: none;
+  border-radius: 10px;
+}
+
+.qr-menu-item-text {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.qr-menu-item {
+  height: 500px; /* ֆիքսված ընդհանուր բարձրություն */
+  display: flex;
+  flex-direction: column;
+}
+
+.qr-menu-item img {
+  height: 400px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.qr-menu-item-text {
+  flex: 1;
+  display: flex;
+  width: 80%;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.qr-menu-item-line {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.2rem;
+}
+
+.item-name-block {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.item-name-en {
+  font-size: 14px;
+}
+
+.item-name-hy {
+  font-size: 10px;
+}
+
+.item-price {
+  align-self: flex-end;
+  font-size: 10px;
+  font-weight: bold;
+  color: black;
+}
+
+/* ----- Menu Info ----- */
+
+.qr-menu-info {
+  margin-top: 3rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: black;
+}
+
+.qr-menu-info p {
+  margin: 0.25rem 0;
+}
+
+/* ----- Animations ----- */
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeIn 0.5s forwards;
+}
+.image-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+
+.image-modal-content {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.image-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 2rem;
+  color: white;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10000;
+}
+
+
+/* ----- Responsive ----- */
+
+@media (max-width: 600px) {
+
+    .qr-menu-hero {
+        height: 320px;
+    }
+  .menu-title {
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5rem;
+    text-align: center;
+  }
+
+  .qr-menu-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qr-menu-item {
+    flex-direction: column;
+    align-items: flex-start;
+    height: 400px;
+  }
+
+  .qr-menu-item img {
+    margin-right: 0;
+    margin-bottom: 0.5rem;
+    height:300px;
+  }
+
+  .qr-menu-item-line {
+    flex-direction: column; /* ✅ Տեքստերը իրար տակ */
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .item-name-en {
+    font-size: 14px;
+  }
+
+  .item-name-hy {
+    font-size: 10px;
+  }
+
+  .item-price {
+    font-size: 10px;
+    align-self: flex-end;
+  }
+
+  .qr-menu-item-text {
+    padding: 0.5rem 0.75rem;
+    gap: 0.2rem;
+  }
+
+  .qr-menu-section h3 {
+    font-size: 1.2rem;
+  }
+
+  .qr-menu-info {
+    font-size: 0.75rem;
+  }
+}
