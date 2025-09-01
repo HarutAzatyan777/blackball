@@ -40,53 +40,74 @@
   background: #FFFFFF /* warm craft-paper look */
 }
 .promo-text {
-  background-color: #111; /* մուգ, մեկ գույնի ֆոն */
-  color: #f2f2f2;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #000000;
+  font-family: 'Special Gothic Expanded One', sans-serif;
   line-height: 1.8;
-  padding: 30px;
+  padding: 20px;
   border-radius: 12px;
   max-width: 700px;
   margin: 40px auto;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+ 
+}
+
+.promo-text {
+  background: #ffffff; /* պարզ սպիտակ ֆոն */
+  color: #222222;      /* մուգ մոխրագույն տեքստ */
+  font-family: "Georgia", "Times New Roman", serif; /* դասական serif font */
+  line-height: 1.7;
+  padding: 30px;
+  border-radius: 8px;
+  max-width: 750px;
+  margin: 40px auto;
+  border: 1px solid #ddd; /* նուրբ մոխրագույն եզրագիծ */
 }
 
 .promo-text p {
   margin-bottom: 18px;
-  font-size: 18px;
+  font-size: 17px;
+  text-align: center;
 }
 
 .promo-text p strong {
-  color: #ffffff; /* պարզ սպիտակ, առանց ոսկեգույնի */
+  color: #000000; /* սև շեշտում */
   font-weight: bold;
 }
 
 .promo-text ul {
   list-style: none;
   padding-left: 0;
-  margin: 0 0 20px 0;
+  margin: 20px 0;
 }
 
 .promo-text li {
   position: relative;
-  padding-left: 26px;
-  margin-bottom: 12px;
-  font-size: 17px;
+  padding-left: 25px;
+  margin-bottom: 14px;
+  font-size: 16px;
 }
 
 .promo-text li::before {
-  content: '•'; /* կլասիկ կետ */
+  content: "•"; /* կլասիկ bullet */
   position: absolute;
   left: 0;
   top: 0;
   font-size: 18px;
-  color: #ccc; /* բաց մոխրագույն */
+  color: #555; /* նուրբ մոխրագույն bullet */
 }
 
-
-.qr-menu-page p{
-  padding: 2rem 1rem;
+.promo-text em {
+  display: block;
+  font-size: 14px;
+  color: #777;
+  margin-top: 2px;
 }
+
+.promo-text strong {
+  font-size: 17px;
+  display: inline-block;
+  margin-top: 12px;
+}
+
 
 .menu-title {
   display: flex;
