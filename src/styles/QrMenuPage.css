@@ -40,50 +40,47 @@
   background: #FFFFFF /* warm craft-paper look */
 }
 .promo-text {
-  background: linear-gradient(145deg, #0c0c0c, #1a1a1a); /* խոր մուգ ֆոն */
+  background-color: #111; /* մուգ, մեկ գույնի ֆոն */
   color: #f2f2f2;
-  font-family: 'Georgia', 'Times New Roman', serif; /* դասական զգացողություն */
-  line-height: 1.9;
-  padding: 40px;
-  border-radius: 16px;
-  max-width: 720px;
-  margin: 50px auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 215, 0, 0.2); /* նուրբ ոսկեգույն եզրագիծ */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.8;
+  padding: 30px;
+  border-radius: 12px;
+  max-width: 700px;
+  margin: 40px auto;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
 }
 
 .promo-text p {
-  margin-bottom: 22px;
-  font-size: 19px;
+  margin-bottom: 18px;
+  font-size: 18px;
 }
 
 .promo-text p strong {
-  color: #ffd700; /* ոսկեգույն */
+  color: #ffffff; /* պարզ սպիտակ, առանց ոսկեգույնի */
   font-weight: bold;
 }
 
 .promo-text ul {
   list-style: none;
   padding-left: 0;
-  margin-top: 0;
-  margin-bottom: 25px;
+  margin: 0 0 20px 0;
 }
 
 .promo-text li {
   position: relative;
-  padding-left: 32px;
-  margin-bottom: 14px;
-  font-size: 18px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding-left: 26px;
+  margin-bottom: 12px;
+  font-size: 17px;
 }
 
 .promo-text li::before {
-  content: '•'; /* կլասիկ bullet */
+  content: '•'; /* կլասիկ կետ */
   position: absolute;
   left: 0;
   top: 0;
-  font-size: 20px;
-  color: #ffd700; /* ոսկեգույն նշան */
+  font-size: 18px;
+  color: #ccc; /* բաց մոխրագույն */
 }
 
 
