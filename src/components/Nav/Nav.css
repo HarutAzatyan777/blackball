@@ -1,64 +1,72 @@
-/* Nav-ն սկսում է իր սովորական դիրքով */
+/* --- Sticky Nav --- */
 .qr-nav {
   position: sticky;
-  top: 0;                       /* Երբ սքրոլլ անի, կպնի վերևին */
+  top: 0;                       /* Scroll-ի ժամանակ կպնի վերևին */
   z-index: 999;
-  
+
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
-  /* border-bottom: 2px solid #000000; */
   padding: 0.5rem 1rem;
-  
+
   overflow-x: auto;
   white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
   scroll-behavior: smooth;
-  background-color: #ffffff91;    /* Կամ թափանցիկ, եթե ուզում ես */
-}
-/* .qr-nav-buttons {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;             
-  gap: 0.5rem;
-  min-width: max-content;        
-  font-family: 'Special Gothic Expanded One', sans-serif;
-} */
 
+  background-color: rgba(255, 255, 255, 0.92); /* թեթև թափանցիկ */
+  backdrop-filter: blur(6px);                  /* 👌 ավելի classy */
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+/* --- Buttons container --- */
 .qr-nav-buttons {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;              /* ✅ Մի գիծում թողնում ենք */
+  flex-wrap: nowrap;              /* Մնում են մեկ գծում */
   gap: 0.5rem;
-  min-width: max-content;         /* ✅ Չկտրվի */
+  min-width: max-content;         /* Չկտրվեն */
   font-family: 'Special Gothic Expanded One', sans-serif;
 }
 
+/* --- Base button --- */
 .qr-nav-button {
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #000;
+  color: #fff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 12px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
   font-family: 'Special Gothic Expanded One', sans-serif;
-  white-space: nowrap;           /* ✅ Թույլ չի տալիս բառակտում */
-  flex-shrink: 0;                /* ✅ Չփոքրանա scroll-ի պատճառով */
+  white-space: nowrap;            /* Բառակտում չի լինի */
+  flex-shrink: 0;                 /* Չփոքրանա scroll-ի ժամանակ */
+  font-size: 14px;
 }
 
+/* --- Hover --- */
 .qr-nav-button:hover {
-
- background-color: black;
-  color: #ffffff;
+  background-color: #111;
+  transform: translateY(-1px);
 }
 
-/* ----- Active Button ----- */
-
+/* --- Active --- */
 .qr-nav-button.active {
-  background-color: rgba(0, 0, 0, 0.637);
-  color: #ffffff;
- 
+  background-color: rgba(0, 0, 0, 0.75);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* --- Responsive --- */
+@media (max-width: 600px) {
+  .qr-nav {
+    padding: 0.5rem;
+  }
+
+  .qr-nav-button {
+    font-size: 12px;
+    padding: 0.4rem 0.8rem;
+  }
 }

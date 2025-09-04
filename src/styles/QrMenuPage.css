@@ -259,17 +259,17 @@
   padding: 1rem;
   
   justify-content: flex-start;
-  align-items: flex-start;
+  
 }
 
-.qr-menu-item:not(:has(img)) .qr-menu-item-text {
+/* .qr-menu-item:not(:has(img)) .qr-menu-item-text {
   width: auto;
   padding: 0;
   gap: 0.4rem;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-}
+} */
 .qr-menu-item:not(:has(img)) {
   height: auto;
  
@@ -281,7 +281,7 @@
   gap: 0.4rem;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+
 }
 
 .qr-menu-item:hover {
@@ -434,7 +434,7 @@
 
   .qr-menu-item {
     flex-direction: column;
-    align-items: flex-start;
+    
     height: 400px;
   }
 
