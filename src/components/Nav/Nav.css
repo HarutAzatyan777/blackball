@@ -1,72 +1,96 @@
-/* --- Sticky Nav --- */
+/* 🌤 Modern Sticky Nav */
 .qr-nav {
   position: sticky;
-  top: 0;                       /* Scroll-ի ժամանակ կպնի վերևին */
+  top: 0;
   z-index: 999;
-
   display: flex;
   justify-content: flex-start;
   align-items: center;
   max-width: 900px;
   margin: 0 auto;
-  padding: 0.5rem 1rem;
+  padding: 0.6rem 1rem;
 
   overflow-x: auto;
   white-space: nowrap;
-  -webkit-overflow-scrolling: touch; /* Smooth scroll iOS */
+  -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
 
-  background-color: rgba(255, 255, 255, 0.92); /* թեթև թափանցիկ */
-  backdrop-filter: blur(6px);                  /* 👌 ավելի classy */
-  border-bottom: 1px solid rgba(0,0,0,0.05);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px); /* 🧊 glass effect */
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  scrollbar-width: none;
+}
+.qr-nav::-webkit-scrollbar {
+  display: none;
 }
 
-/* --- Buttons container --- */
+/* 📚 Buttons Container */
 .qr-nav-buttons {
   display: flex;
   flex-direction: row;
-  flex-wrap: nowrap;              /* Մնում են մեկ գծում */
-  gap: 0.5rem;
-  min-width: max-content;         /* Չկտրվեն */
+  flex-wrap: nowrap;
+  gap: 0.6rem;
+  min-width: max-content;
   font-family: 'Special Gothic Expanded One', sans-serif;
 }
 
-/* --- Base button --- */
+/* 🎨 Button Style */
 .qr-nav-button {
-  background-color: #000;
-  color: #fff;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 12px;
+  position: relative;
+  background: rgba(255, 255, 255, 0.25);
+  color: #000;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 10px; /* 👈 փոքրացրել ենք */
+  padding: 0.55rem 1.3rem;
+  backdrop-filter: blur(10px);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Special Gothic Expanded One', sans-serif;
-  white-space: nowrap;            /* Բառակտում չի լինի */
-  flex-shrink: 0;                 /* Չփոքրանա scroll-ի ժամանակ */
-  font-size: 14px;
 }
 
-/* --- Hover --- */
+.qr-nav-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255,255,255,0.25), rgba(255,255,255,0));
+  transform: skewX(-25deg);
+  transition: left 0.6s ease;
+}
+
+.qr-nav-button:hover::before {
+  left: 125%;
+}
+
 .qr-nav-button:hover {
-  background-color: #111;
-  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
-/* --- Active --- */
 .qr-nav-button.active {
-  background-color: rgba(0, 0, 0, 0.75);
+  background: linear-gradient(135deg, #000, #2b2b2b);
   color: #fff;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+  border-radius: 12px; /* 👈 ավելի փոքր ու խիտ */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  letter-spacing: 0.25px;
 }
 
-/* --- Responsive --- */
-@media (max-width: 600px) {
-  .qr-nav {
-    padding: 0.5rem;
-  }
+.qr-nav-button.active:hover {
+  background: linear-gradient(135deg, #111, #3a3a3a);
+  transform: translateY(-3px);
+}
 
-  .qr-nav-button {
-    font-size: 12px;
-    padding: 0.4rem 0.8rem;
-  }
+
+/* 🖱️ Drag Scroll Cursor */
+.qr-nav {
+  cursor: grab;
+  cursor: -webkit-grab;
+}
+.qr-nav.dragging {
+  cursor: grabbing;
+  cursor: -webkit-grabbing;
 }
