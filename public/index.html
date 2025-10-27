@@ -19,7 +19,18 @@
 
     <!-- Manifest -->
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-
+    <script
+    async
+    src="https://www.googletagmanager.com/gtag/js?id=G-6PXLPN4NVB"
+  ></script>
+  <script>
+    function gtag() {
+      window.dataLayer.push(arguments);
+    }
+    window.dataLayer = window.dataLayer || [];
+    gtag("js", new Date());
+    gtag("config", "G-6PXLPN4NVB");
+  </script>
     <!-- Google Fonts -->
     <link
       href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;600&display=swap"
