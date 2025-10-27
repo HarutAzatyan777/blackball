@@ -386,32 +386,93 @@
 .image-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 9999;
-  cursor: zoom-out;
+  justify-content: center;
+  z-index: 999;
+  padding: 10px;
+}
+
+.modal-inner {
+  position: relative;
+  max-width: 90%;
+  max-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
 }
 
 .image-modal-content {
-  max-width: 90%;
-  max-height: 90%;
+  width: 100%;
+  max-height: 70vh;
   border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+  object-fit: contain;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+  transition: transform 0.3s ease;
 }
 
+.image-info {
+  margin-top: 10px;
+  text-align: center;
+  color: #fff;
+}
+
+.modal-item-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.modal-item-price {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+/* --- Close Button --- */
 .image-modal-close {
   position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 2rem;
-  color: white;
+  top: 15px;
+  right: 20px;
+  font-size: 32px;
+  color: #fff;
   background: transparent;
   border: none;
   cursor: pointer;
-  z-index: 10000;
+  z-index: 1000;
 }
+
+/* --- Arrows on Image --- */
+.nav-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 42px;
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  padding: 8px 16px;
+  border-radius: 50%;
+  user-select: none;
+  z-index: 10;
+  transition: background 0.2s ease;
+}
+
+.nav-btn:hover {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.nav-btn.prev {
+  left: 10px;
+}
+
+.nav-btn.next {
+  right: 10px;
+}
+
+
+  
 
 
 /* ----- Responsive ----- */
@@ -475,4 +536,31 @@
   .qr-menu-info {
     font-size: 0.75rem;
   }
+  .modal-inner {
+    max-width: 95%;
+  }
+
+  .image-modal-content {
+    max-height: 60vh;
+  }
+
+  .nav-btn {
+    font-size: 30px;
+    padding: 6px 10px;
+  }
+
+  .image-modal-close {
+    font-size: 26px;
+    top: 10px;
+    right: 15px;
+  }
+
+  .modal-item-name {
+    font-size: 1rem;
+  }
+
+  .modal-item-price {
+    font-size: 0.9rem;
+  }
+
 }

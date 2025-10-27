@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "../firebase";
 import "../styles/QrMenuPage.css";
@@ -16,6 +16,7 @@ function slugify(text) {
     .replace(/--+/g, "-");
 }
 
+
 /* ----- MenuSection Subcomponent ----- */
 function MenuSection({ section, index, onImageClick }) {
   const sectionId = slugify(section.category);
@@ -27,17 +28,16 @@ function MenuSection({ section, index, onImageClick }) {
       style={{ animationDelay: `${index * 100}ms` }}
     >
       <h3 className="qr-menu-section-title">
-        {/* <img src="/icon.png" alt="Default Icon" className="section-icon" /> */}
         {section.category}
         {section.iconUrl && (
           <img
             src={section.iconUrl}
-            alt="Category Extra Icon"
+            alt="Category Icon"
             className="section-icon-iconUrl"
-            style={{ marginLeft: "4px" }}
           />
         )}
       </h3>
+
       <ul className="qr-menu-items">
         {section.items?.map((item, idx) => (
           <li key={idx} className="qr-menu-item">
@@ -46,8 +46,8 @@ function MenuSection({ section, index, onImageClick }) {
                 src={item.imageUrl}
                 alt={item.nameEn || item.nameHy || "Menu item image"}
                 className="qr-menu-item-image"
-                onClick={() => onImageClick(item.imageUrl)}
-                style={{ cursor: "zoom-in" }}
+                onClick={() => onImageClick(section.items, idx)}
+                loading="lazy"
               />
             )}
             <div className="qr-menu-item-text">
@@ -75,13 +75,24 @@ function MenuSection({ section, index, onImageClick }) {
 export default function QrMenuPage() {
   const [menu, setMenu] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [previewImage, setPreviewImage] = useState(null);
+  const [previewData, setPreviewData] = useState({
+    items: [],
+    currentIndex: 0,
+  });
 
-  const categories = [...new Set(menu.map((s) => s.category))];
-  const categorySlugs = categories.map((cat) => ({
-    name: cat,
-    slug: slugify(cat),
-  }));
+  const categories = useMemo(
+    () => [...new Set(menu.map((s) => s.category))],
+    [menu]
+  );
+
+  const categorySlugs = useMemo(
+    () =>
+      categories.map((cat) => ({
+        name: cat,
+        slug: slugify(cat),
+      })),
+    [categories]
+  );
 
   useEffect(() => {
     const fetchMenu = async () => {
@@ -99,9 +110,63 @@ export default function QrMenuPage() {
         setLoading(false);
       }
     };
-
     fetchMenu();
   }, []);
+
+  const handleImageClick = (items, index) => {
+    setPreviewData({ items, currentIndex: index });
+  };
+
+  const handleClose = () => setPreviewData({ items: [], currentIndex: 0 });
+
+  const handleNext = (e) => {
+    e.stopPropagation();
+    setPreviewData((prev) => ({
+      ...prev,
+      currentIndex:
+        prev.currentIndex === prev.items.length - 1
+          ? 0
+          : prev.currentIndex + 1,
+    }));
+  };
+
+  const handlePrev = (e) => {
+    e.stopPropagation();
+    setPreviewData((prev) => ({
+      ...prev,
+      currentIndex:
+        prev.currentIndex === 0
+          ? prev.items.length - 1
+          : prev.currentIndex - 1,
+    }));
+  };
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (!previewData.items.length) return;
+  
+      switch (e.key) {
+        case "Escape":
+          handleClose();
+          break;
+        case "ArrowRight":
+          handleNext(e);
+          break;
+        case "ArrowLeft":
+          handlePrev(e);
+          break;
+        default:
+          break;
+      }
+    };
+  
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [previewData.items]);
+  
+  
+
+  const currentItem = previewData.items[previewData.currentIndex];
 
   return (
     <div className="qr-menu-page">
@@ -111,6 +176,7 @@ export default function QrMenuPage() {
 
       {loading ? (
         <div className="loader" aria-label="Մենյուն բեռնվում է...">
+          <div className="spinner"></div>
           <span>Մենյուն բեռնվում է...</span>
         </div>
       ) : menu.length === 0 ? (
@@ -123,60 +189,44 @@ export default function QrMenuPage() {
             <MenuSection
               section={section}
               index={index}
-              onImageClick={setPreviewImage}
+              onImageClick={handleImageClick}
             />
-           {index === 0 && (
-   <div className="after-first-category-text">
-    <img src="/bg2.png" alt="Coffee Icon" />
-    
-    <div class="promo-text">
-    <p>🎱 <strong>BlackBallPool Billiard Bar</strong> – որտեղ խաղը դառնում է հաճույք 🍸</p>
-<p>Այստեղ քեզ սպասում են / Here you’ll find:</p>
-
-<ul>
-  <li>🎱 Մրցակցային և պրոֆեսիոնալ բիլիարդ սեղաններ  
-      <br/><em>Competitive & professional billiard tables</em></li>
-
-  <li>🃏 Մաֆիա և Փոքեր երեկոներ  
-      <br/><em>Mafia & Poker nights</em></li>
-
-  <li>🎮 PS5 գեյմինգ անկյուն  
-      <br/><em>PS5 gaming corner</em></li>
-
-  <li>🥂 Բարձրորակ խմիչքներ և կոկտեյլներ  
-      <br/><em>Premium drinks & cocktails</em></li>
-
-  <li>🎵 Հարմարավետ մթնոլորտ և լավ երաժշտություն  
-      <br/><em>Cozy atmosphere & good music</em></li>
-</ul>
-
-  <p><strong>Արդեն այստեղ ես❓ Ուրեմն խաղը սկսված է․ BlackBall-ում միշտ հաղթում է լավ տրամադրությունը 🎱</strong></p>
-
-</div>
-
-
- </div>
-)}
           </div>
         ))
       )}
 
-      {previewImage && (
-        <div className="image-modal" onClick={() => setPreviewImage(null)}>
-          <img
-            src={previewImage}
-            alt="Preview"
-            className="image-modal-content"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <button
-            className="image-modal-close"
-            onClick={() => setPreviewImage(null)}
-          >
+      {/* ----- Image Modal with Buttons on Image ----- */}
+      {currentItem && (
+        <div className="image-modal" onClick={handleClose}>
+          <button className="image-modal-close" onClick={handleClose}>
             ×
           </button>
+
+          <div className="modal-inner" onClick={(e) => e.stopPropagation()}>
+            <button className="nav-btn prev" onClick={handlePrev}>
+              ‹
+            </button>
+
+            <img
+              src={currentItem.imageUrl}
+              alt={currentItem.nameEn || currentItem.nameHy || "Preview"}
+              className="image-modal-content"
+            />
+
+            <button className="nav-btn next" onClick={handleNext}>
+              ›
+            </button>
+
+            <div className="image-info">
+              <p className="modal-item-name">
+                {currentItem.nameHy || currentItem.nameEn}
+              </p>
+              <p className="modal-item-price">{currentItem.price} AMD</p>
+            </div>
+          </div>
         </div>
       )}
+
       <ScrollToTop />
     </div>
   );

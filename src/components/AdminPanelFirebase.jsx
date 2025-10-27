@@ -16,6 +16,7 @@ import ConfirmModal from "./ConfirmModal";
 import ActionButton from "./ActionButton";
 import "../styles/AdminPanelFirebase.css";
 import { signOut, onAuthStateChanged } from "firebase/auth";
+import AnalyticsDashboard from "./AnalyticsDashboard";
 
 const menuRef = collection(db, "menu");
 
@@ -297,6 +298,7 @@ const cancelItemEdit = () => {
   return (
     <div className="admin-panel">
       <h2>Admin Panel</h2>
+      {/* <AnalyticsDashboard /> */}
         <button
           onClick={handleLogout}
           style={{
@@ -440,6 +442,7 @@ const cancelItemEdit = () => {
               </li>
             ))}
           </ul>
+      
         </div>
       ))}
 
