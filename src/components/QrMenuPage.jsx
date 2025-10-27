@@ -4,6 +4,8 @@ import { db } from "../firebase";
 import "../styles/QrMenuPage.css";
 import Nav from "./Nav/Nav";
 import ScrollToTop from "../components/ScrollToTop";
+import MenuSkeleton from "../components/MenuSkeleton/MenuSkeleton";
+
 
 /* ----- Օգնական ֆունկցիա slugify-ի համար ----- */
 function slugify(text) {
@@ -175,11 +177,9 @@ export default function QrMenuPage() {
       <Nav categories={categorySlugs} />
 
       {loading ? (
-        <div className="loader" aria-label="Մենյուն բեռնվում է...">
-          <div className="spinner"></div>
-          <span>Մենյուն բեռնվում է...</span>
-        </div>
-      ) : menu.length === 0 ? (
+  <MenuSkeleton />
+) : menu.length === 0 ? (
+
         <p className="empty-state">
           Մենյուն դեռ դատարկ է։ Խնդրում ենք փորձել ավելի ուշ կամ կապվել մեզ հետ։
         </p>

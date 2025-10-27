@@ -1,0 +1,86 @@
+.menu-skeleton {
+  padding: 1rem;
+}
+
+.skeleton-section {
+  margin-bottom: 2rem;
+}
+
+.skeleton-title {
+  width: 35%;
+  height: 22px;
+  background: #e0e0e0;
+  border-radius: 6px;
+  margin-bottom: 1.2rem;
+}
+
+/* --- Always 2 items per row --- */
+.skeleton-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* ALWAYS 2 per row */
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.skeleton-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.8rem;
+  background: #fafafa;
+  border-radius: 12px;
+  min-height: 90px;
+}
+
+.skeleton-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 10px;
+  background: #e0e0e0;
+  flex-shrink: 0;
+}
+
+.skeleton-text {
+  flex: 1;
+}
+
+.skeleton-line {
+  height: 14px;
+  background: #e0e0e0;
+  border-radius: 4px;
+  margin-bottom: 6px;
+}
+
+.skeleton-line.short {
+  width: 50%;
+}
+
+/* --- Shimmer Animation --- */
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    #e0e0e0 25%,
+    #f5f5f5 50%,
+    #e0e0e0 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* --- No responsive change --- */
+@media (max-width: 600px) {
+  .skeleton-items {
+    grid-template-columns: repeat(2, 1fr); /* keep 2 on mobile */
+  }
+}
