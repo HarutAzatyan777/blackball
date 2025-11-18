@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   collection,
   getDocs,
@@ -16,7 +16,7 @@ import ConfirmModal from "./ConfirmModal";
 import ActionButton from "./ActionButton";
 import "../styles/AdminPanelFirebase.css";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-import AnalyticsDashboard from "./AnalyticsDashboard";
+// import AnalyticsDashboard from "./AnalyticsDashboard";
 
 const menuRef = collection(db, "menu");
 
@@ -32,68 +32,62 @@ export default function AdminPanelFirebase() {
   const [itemNameEn, setItemNameEn] = useState("");
   const [itemPrice, setItemPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [editingItem, setEditingItem] = useState(null);
+  const [editingItem, setEditingItem] = useState(null); // { original, index }
   const [confirmDelete, setConfirmDelete] = useState({
     visible: false,
     type: null,
     payload: null,
   });
 
-  // Ավելացրու այս մասը, հենց ստեղ նոր ֆունկցիաներ
-const cancelCategoryEdit = () => {
-  setEditingCategory(null);
-  setEditingCategoryName("");
-  setEditingCategoryIconUrl("");
-};
+  // Cancel helpers
+  const cancelCategoryEdit = () => {
+    setEditingCategory(null);
+    setEditingCategoryName("");
+    setEditingCategoryIconUrl("");
+  };
 
-const cancelItemEdit = () => {
-  setEditingItem(null);
-  setItemNameHy("");
-  setItemNameEn("");
-  setItemPrice("");
-  setImageUrl("");
-};
+  const cancelItemEdit = () => {
+    setEditingItem(null);
+    setItemNameHy("");
+    setItemNameEn("");
+    setItemPrice("");
+    setImageUrl("");
+    setSelectedCatId("");
+  };
 
-
-  const editingCategoryRef = useRef(null);
-  const itemFormRef = useRef(null);
-  
-
-    // ✅ Check if user is logged in
+  // Auth check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
-        window.location.href = "/login"; // redirect if not logged in
+        window.location.href = "/login";
       }
     });
     return () => unsubscribe();
   }, []);
 
-  // ✅ Logout function
+  // Logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
-      console.log("User signed out");
       window.location.href = "/login";
     } catch (error) {
       console.error("Logout error:", error);
     }
   };
 
-
+  // Load menu
   const loadMenu = async () => {
     const snapshot = await getDocs(menuRef);
-    const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
     data.sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
-  
-    console.log(
-      "Loaded menu order:",
-      data.map((d) => `${d.category}: ${d.order}`)
-    );
-  
     setMenu(data);
   };
-  
+
+  useEffect(() => {
+    loadMenu();
+  }, []);
+
+  // Normalize order
   const normalizeCategoryOrder = async () => {
     const sortedMenu = [...menu].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
     await Promise.all(
@@ -103,22 +97,6 @@ const cancelItemEdit = () => {
     );
     loadMenu();
   };
-
-  useEffect(() => {
-    loadMenu();
-  }, []);
-
-  useEffect(() => {
-    if (editingCategory && editingCategoryRef.current) {
-      editingCategoryRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  }, [editingCategory]);
-
-  useEffect(() => {
-    if (editingItem && itemFormRef.current) {
-      itemFormRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  }, [editingItem]);
 
   // -- Category handlers --
   const addCategory = async () => {
@@ -148,9 +126,7 @@ const cancelItemEdit = () => {
       category: editingCategoryName,
       iconUrl: editingCategoryIconUrl,
     });
-    setEditingCategory(null);
-    setEditingCategoryName("");
-    setEditingCategoryIconUrl("");
+    cancelCategoryEdit();
     loadMenu();
   };
 
@@ -175,24 +151,14 @@ const cancelItemEdit = () => {
     if (index === menu.length - 1) return;
     const current = menu[index];
     const next = menu[index + 1];
-  
-    console.log("Moving down:", current.category, "↓", next.category);
-    console.log("Before swap:", {
-      currentOrder: current.order,
-      nextOrder: next.order,
-    });
-  
     const currentRef = doc(db, "menu", current.id);
     const nextRef = doc(db, "menu", next.id);
     await Promise.all([
       updateDoc(currentRef, { order: next.order }),
       updateDoc(nextRef, { order: current.order }),
     ]);
-  
-    // Wait a bit to make sure update completes before reload
-    setTimeout(loadMenu, 500);
+    setTimeout(loadMenu, 400);
   };
-  
 
   // -- Item handlers --
   const addItem = async () => {
@@ -206,10 +172,7 @@ const cancelItemEdit = () => {
         imageUrl: imageUrl,
       }),
     });
-    setItemNameHy("");
-    setItemNameEn("");
-    setItemPrice("");
-    setImageUrl("");
+    cancelItemEdit();
     loadMenu();
   };
 
@@ -217,7 +180,7 @@ const cancelItemEdit = () => {
     setSelectedCatId(catId);
     setItemNameHy(item.nameHy || "");
     setItemNameEn(item.nameEn || "");
-    setItemPrice(item.price);
+    setItemPrice(item.price || "");
     setImageUrl(item.imageUrl || "");
     setEditingItem({ original: item, index: idx });
   };
@@ -225,24 +188,19 @@ const cancelItemEdit = () => {
   const editItem = async () => {
     if (!editingItem || !selectedCatId) return;
     const ref = doc(db, "menu", selectedCatId);
-    const updatedItems = menu
-      .find((cat) => cat.id === selectedCatId)
-      .items.map((item) =>
-        item === editingItem.original
+    const updatedItems = (menu.find((cat) => cat.id === selectedCatId)?.items || []).map(
+      (it, i) =>
+        i === editingItem.index
           ? {
               nameHy: itemNameHy,
               nameEn: itemNameEn,
               price: itemPrice,
               imageUrl: imageUrl,
             }
-          : item
-      );
+          : it
+    );
     await updateDoc(ref, { items: updatedItems });
-    setEditingItem(null);
-    setItemNameHy("");
-    setItemNameEn("");
-    setItemPrice("");
-    setImageUrl("");
+    cancelItemEdit();
     loadMenu();
   };
 
@@ -250,10 +208,8 @@ const cancelItemEdit = () => {
     if (index === 0) return;
     const category = menu.find((cat) => cat.id === catId);
     if (!category) return;
-
     const items = [...(category.items || [])];
     [items[index - 1], items[index]] = [items[index], items[index - 1]];
-
     const ref = doc(db, "menu", catId);
     await updateDoc(ref, { items });
     loadMenu();
@@ -263,10 +219,8 @@ const cancelItemEdit = () => {
     const category = menu.find((cat) => cat.id === catId);
     if (!category) return;
     if (index === (category.items?.length ?? 0) - 1) return;
-
     const items = [...(category.items || [])];
     [items[index], items[index + 1]] = [items[index + 1], items[index]];
-
     const ref = doc(db, "menu", catId);
     await updateDoc(ref, { items });
     loadMenu();
@@ -298,7 +252,9 @@ const cancelItemEdit = () => {
   return (
     <div className="admin-panel">
       <h2>Admin Panel</h2>
-      {/* <AnalyticsDashboard /> */}
+
+      {/* Top actions */}
+      <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
         <button
           onClick={handleLogout}
           style={{
@@ -306,20 +262,31 @@ const cancelItemEdit = () => {
             background: "#f44336",
             color: "#fff",
             border: "none",
-            borderRadius: "4px",
+            borderRadius: "6px",
             cursor: "pointer",
           }}
+          title="Logout"
         >
           Logout
         </button>
-      <button 
-        onClick={normalizeCategoryOrder} 
-        style={{ marginBottom: "20px", padding: "8px 16px", cursor: "pointer" }}
-        title="Normalize category order"
-      >
-        Կարգավորել կարգը
-      </button>
 
+        <button
+          onClick={normalizeCategoryOrder}
+          style={{
+            padding: "8px 16px",
+            background: "#4a60e2",
+            color: "#fff",
+            border: "none",
+            borderRadius: "6px",
+            cursor: "pointer",
+          }}
+          title="Normalize category order"
+        >
+          Կարգավորել կարգը
+        </button>
+      </div>
+
+      {/* Category creation / edit form (separate top form) */}
       <CategoryForm
         category={category}
         categoryIconUrl={categoryIconUrl}
@@ -333,51 +300,49 @@ const cancelItemEdit = () => {
         setEditingCategoryIconUrl={setEditingCategoryIconUrl}
         editCategory={editCategory}
         setEditingCategory={setEditingCategory}
-        cancelCategoryEdit={cancelCategoryEdit} 
-        editingCategoryRef={editingCategoryRef}
+        cancelCategoryEdit={cancelCategoryEdit}
       />
 
       <hr />
 
-      <div ref={itemFormRef}>
-        <ItemForm
-          menu={menu}
-          selectedCatId={selectedCatId}
-          setSelectedCatId={setSelectedCatId}
-          itemNameHy={itemNameHy}
-          setItemNameHy={setItemNameHy}
-          itemNameEn={itemNameEn}
-          setItemNameEn={setItemNameEn}
-          itemPrice={itemPrice}
-          setItemPrice={setItemPrice}
-          imageUrl={imageUrl}
-          setImageUrl={setImageUrl}
-          addItem={addItem}
-          editingItem={editingItem}
-          editItem={editItem}
-          cancelItemEdit={cancelItemEdit}
-        />
-      </div>
+      {/* Item top form (add new) */}
+      <ItemForm
+        menu={menu}
+        selectedCatId={selectedCatId}
+        setSelectedCatId={setSelectedCatId}
+        itemNameHy={itemNameHy}
+        setItemNameHy={setItemNameHy}
+        itemNameEn={itemNameEn}
+        setItemNameEn={setItemNameEn}
+        itemPrice={itemPrice}
+        setItemPrice={setItemPrice}
+        imageUrl={imageUrl}
+        setImageUrl={setImageUrl}
+        addItem={addItem}
+        editingItem={editingItem}
+        editItem={editItem}
+        cancelItemEdit={cancelItemEdit}
+      />
 
       <hr />
 
-      {/* List of categories and items */}
+      {/* Categories + Items list with inline editors */}
       {menu.map((sec, index) => (
-        <div key={sec.id}>
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            {sec.iconUrl && (
-              <img
-                src={sec.iconUrl}
-                alt={`${sec.category} icon`}
-                style={{ width: 24, height: 24, objectFit: "contain" }}
-              />
-            )}
-            <h3 style={{ margin: 0 }}>{sec.category}</h3>
-            <span className="reorder-buttons">
-              <ActionButton
-                onAction={() => moveCategoryUp(index)}
-                disabled={index === 0}
-              >
+        <div key={sec.id} style={{ marginBottom: 18 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
+              {sec.iconUrl && (
+                <img
+                  src={sec.iconUrl}
+                  alt={`${sec.category} icon`}
+                  style={{ width: 28, height: 28, objectFit: "contain", borderRadius: 6 }}
+                />
+              )}
+              <h3 style={{ margin: 0 }}>{sec.category}</h3>
+            </div>
+
+            <div className="reorder-buttons" style={{ display: "flex", gap: 6 }}>
+              <ActionButton onAction={() => moveCategoryUp(index)} disabled={index === 0}>
                 ⬆
               </ActionButton>
               <ActionButton
@@ -386,63 +351,166 @@ const cancelItemEdit = () => {
               >
                 ⬇
               </ActionButton>
-              <ActionButton onAction={() => startEditingCategory(sec)}>
-                ✏️
-              </ActionButton>
-              <ActionButton onAction={() => askDeleteCategory(sec.id)}>
-                ❌
-              </ActionButton>
-            </span>
-          </div>
-
-          <ul style={{ listStyle: "none", padding: 0 }}>
-            {sec.items?.map((item, idx) => (
-              <li
-                key={idx}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "10px",
-                  marginBottom: "10px",
+              <ActionButton
+                onAction={() => {
+                  // Open inline category editor for this category
+                  startEditingCategory(sec);
                 }}
               >
-                {item.imageUrl && (
-                  <img
-                    src={item.imageUrl}
-                    alt=""
-                    style={{
-                      width: 50,
-                      height: 50,
-                      objectFit: "cover",
-                      borderRadius: 6,
-                    }}
-                  />
-                )}
-                <span style={{ flexGrow: 1 }}>
-                  {item.nameEn} / {item.nameHy} - {item.price} ֏
-                </span>
-                <ActionButton
-                  onAction={() => moveItemUp(sec.id, idx)}
-                  disabled={idx === 0}
+                ✏️
+              </ActionButton>
+              <ActionButton onAction={() => askDeleteCategory(sec.id)}>❌</ActionButton>
+            </div>
+          </div>
+
+          {/* Inline Category Editor (appears under category header) */}
+          {editingCategory?.id === sec.id && (
+            <div className="inline-editor" style={{ marginTop: 10 }}>
+              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+                <input
+                  type="text"
+                  value={editingCategoryName}
+                  onChange={(e) => setEditingCategoryName(e.target.value)}
+                  placeholder="Category name"
+                  style={{ flex: 1 }}
+                />
+                <input
+                  type="text"
+                  value={editingCategoryIconUrl}
+                  onChange={(e) => setEditingCategoryIconUrl(e.target.value)}
+                  placeholder="Icon URL"
+                  style={{ flex: 1 }}
+                />
+              </div>
+              <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                <button onClick={editCategory} style={{ padding: "8px 12px" }}>
+                  Պահպանել
+                </button>
+                <button onClick={cancelCategoryEdit} className="cancel-btn" style={{ padding: "8px 12px" }}>
+                  Չեղարկել
+                </button>
+              </div>
+            </div>
+          )}
+
+          <ul style={{ listStyle: "none", padding: 0, marginTop: 12 }}>
+            {(sec.items || []).map((item, idx) => {
+              const itemKey = `${sec.id}-${idx}-${(item.nameEn || item.nameHy || "").replace(/\s+/g, "_")}`;
+              const isEditingThisItem = editingItem && editingItem.index === idx && selectedCatId === sec.id;
+
+              return (
+                <li
+                  key={itemKey}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 12,
+                    marginBottom: 10,
+                    padding: 10,
+                    borderRadius: 8,
+                    background: "#fff",
+                    boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
+                    flexDirection: "column",
+                 
+                  }}
                 >
-                  ⬆
-                </ActionButton>
-                <ActionButton
-                  onAction={() => moveItemDown(sec.id, idx)}
-                  disabled={idx === sec.items.length - 1}
-                >
-                  ⬇
-                </ActionButton>
-                <ActionButton onAction={() => startEditingItem(sec.id, item, idx)}>
-                  ✏️
-                </ActionButton>
-                <ActionButton onAction={() => askDeleteItem(sec.id, item)}>
-                  🗑
-                </ActionButton>
-              </li>
-            ))}
+                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                    {item.imageUrl ? (
+                      <img
+                        src={item.imageUrl}
+                        alt=""
+                        style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 8 }}
+                      />
+                    ) : (
+                      <div
+                        style={{
+                          width: 56,
+                          height: 56,
+                          borderRadius: 8,
+                          background: "#f0f0f0",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          color: "#888",
+                          fontSize: 12,
+                        }}
+                      >
+                        no image
+                      </div>
+                    )}
+
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 600 }}>
+                        {item.nameEn || "—"} / {item.nameHy || "—"}
+                      </div>
+                      <div style={{ color: "#666", marginTop: 4 }}>{item.price} ֏</div>
+                    </div>
+
+                    <div style={{ display: "flex", gap: 6 }}>
+                      <ActionButton onAction={() => moveItemUp(sec.id, idx)} disabled={idx === 0}>
+                        ⬆
+                      </ActionButton>
+                      <ActionButton
+                        onAction={() => moveItemDown(sec.id, idx)}
+                        disabled={idx === (sec.items?.length ?? 1) - 1}
+                      >
+                        ⬇
+                      </ActionButton>
+                      <ActionButton
+                        onAction={() => {
+                          startEditingItem(sec.id, item, idx);
+                        }}
+                      >
+                        ✏️
+                      </ActionButton>
+                      <ActionButton onAction={() => askDeleteItem(sec.id, item)}>🗑</ActionButton>
+                    </div>
+                  </div>
+
+                  {/* Inline Item Editor (appears below the item row) */}
+                  {isEditingThisItem && (
+                    <div className="inline-editor item-editor" style={{ marginTop: 10 }}>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                        <input
+                          type="text"
+                          value={itemNameEn}
+                          onChange={(e) => setItemNameEn(e.target.value)}
+                          placeholder="Name EN"
+                        />
+                        <input
+                          type="text"
+                          value={itemNameHy}
+                          onChange={(e) => setItemNameHy(e.target.value)}
+                          placeholder="Անուն HY"
+                        />
+                        <input
+                          type="number"
+                          value={itemPrice}
+                          onChange={(e) => setItemPrice(e.target.value)}
+                          placeholder="Price"
+                        />
+                        <input
+                          type="text"
+                          value={imageUrl}
+                          onChange={(e) => setImageUrl(e.target.value)}
+                          placeholder="Image URL"
+                        />
+                      </div>
+
+                      <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
+                        <button onClick={editItem} style={{ padding: "8px 12px" }}>
+                          Պահպանել
+                        </button>
+                        <button onClick={cancelItemEdit} className="cancel-btn" style={{ padding: "8px 12px" }}>
+                          Չեղարկել
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </li>
+              );
+            })}
           </ul>
-      
         </div>
       ))}
 
