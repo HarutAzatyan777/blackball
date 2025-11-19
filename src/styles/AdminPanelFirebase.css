@@ -20,7 +20,7 @@
 
 /* ---------- Admin Container ---------- */
 .admin-panel {
-  max-width: 680px;
+  max-width: 1400px;
   margin: 2rem auto;
   padding: 2rem;
   background: var(--card-bg);
@@ -30,9 +30,10 @@
   color: var(--text);
 }
 
+/* Headings */
 .admin-panel h2 {
-  margin-bottom: 1.4rem;
-  font-size: 1.9rem;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
   text-align: center;
   font-weight: 600;
   color: var(--text);
@@ -58,6 +59,7 @@
   box-shadow: 0 0 0 3px rgba(74, 96, 226, 0.15);
 }
 
+/* Horizontal divider */
 .admin-panel hr {
   margin: 2rem 0;
   border: none;
@@ -87,51 +89,54 @@
   transform: translateY(0);
 }
 
-/* Main / Primary (Save, Add, Update) */
-.admin-panel button[title*="Թարմացնել"],
-.admin-panel button[title*="Պահպանել"],
-.admin-panel button[title*="Ավելացնել"],
-.admin-panel button[title*="Խմբագրել"] {
-  background: var(--primary);
-  color: #fff;
-}
-
-.admin-panel button[title*="Թարմացնել"]:hover,
-.admin-panel button[title*="Պահպանել"]:hover,
-.admin-panel button[title*="Ավելացնել"]:hover,
-.admin-panel button[title*="Խմբագրել"]:hover {
-  background: var(--primary-hover);
-}
-
-/* Danger (Delete) */
-.admin-panel button[title*="Ջնջել"] {
-  background: var(--danger);
-  color: #fff;
-}
-
-.admin-panel button[title*="Ջնջել"]:hover {
-  background: var(--danger-hover);
-}
-
-/* Secondary (Cancel) */
-.admin-panel button[title*="Չեղարկել"] {
-  background: var(--gray);
-  color: #fff;
-}
-
-.admin-panel button[title*="Չեղարկել"]:hover {
-  background: var(--gray-hover);
-}
-
 .admin-panel button:disabled {
   background: #c9c9c9;
   cursor: not-allowed;
   transform: none;
 }
 
-/* Reorder buttons group */
+/* Primary Buttons */
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+/* Danger Buttons */
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+.btn-danger:hover {
+  background: var(--danger-hover);
+}
+
+/* Secondary / Cancel Buttons */
+.btn-secondary {
+  background: var(--gray);
+  color: #fff;
+}
+
+.btn-secondary:hover {
+  background: var(--gray-hover);
+}
+
+/* Top actions */
+.top-actions {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+}
+
+/* Reorder buttons */
 .reorder-buttons {
-  margin-left: 10px;
+  display: flex;
+  gap: 6px;
 }
 
 /* ---------- List Items ---------- */
@@ -146,7 +151,7 @@
   align-items: center;
   justify-content: space-between;
   background: var(--card-bg);
-  padding: 0.75rem;
+  padding: 0.75rem 1rem;
   border-radius: 8px;
   margin-bottom: 0.6rem;
   box-shadow: 0 2px 6px rgba(0,0,0,0.05);
@@ -160,21 +165,100 @@
 
 /* Image in list */
 .admin-panel li img {
-  width: 48px;
-  height: 48px;
+  width: 150px;
+  height: 150px;
   object-fit: cover;
   border-radius: 6px;
   margin-right: 12px;
 }
 
-/* Text inside list item */
-.admin-panel li span {
-  flex: 1;
-  font-size: 1rem;
+/* Item Placeholder */
+.item-placeholder {
+  width: 100px;
+  height: 100px;
+  background: #e2e3e5;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  color: #6d6f75;
+  margin-right: 12px;
+}
+
+/* Flex helpers */
+.flex-center {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flex-space-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Inline Editors */
+.inline-editor {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.inline-editor input {
+  flex: 1 1 200px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  background-color: #fff;
+  font-size: 14px;
+}
+
+.inline-editor input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(74, 96, 226, 0.15);
+}
+
+.inline-editor .cancel-btn {
+  background-color: #e2e8f0;
+  color: #1f2937;
+}
+
+.inline-editor .cancel-btn:hover {
+  background-color: #cbd5e1;
+}
+
+/* Item Editor */
+.item-editor {
+  margin-top: 12px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.item-editor button {
+  padding: 8px 14px;
+  border-radius: 6px;
   font-weight: 500;
 }
 
-/* ---------- Mobile Optimization ---------- */
+/* Category Header */
+.category-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.category-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Mobile Optimization */
 @media (max-width: 600px) {
   .admin-panel {
     padding: 1.3rem;
@@ -194,7 +278,13 @@
 
   .reorder-buttons {
     margin-left: 0;
-    display: flex;
-    gap: 6px;
+  }
+
+  .inline-editor {
+    flex-direction: column;
+  }
+
+  .item-editor {
+    grid-template-columns: 1fr;
   }
 }

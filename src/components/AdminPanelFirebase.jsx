@@ -16,7 +16,6 @@ import ConfirmModal from "./ConfirmModal";
 import ActionButton from "./ActionButton";
 import "../styles/AdminPanelFirebase.css";
 import { signOut, onAuthStateChanged } from "firebase/auth";
-// import AnalyticsDashboard from "./AnalyticsDashboard";
 
 const menuRef = collection(db, "menu");
 
@@ -32,14 +31,13 @@ export default function AdminPanelFirebase() {
   const [itemNameEn, setItemNameEn] = useState("");
   const [itemPrice, setItemPrice] = useState("");
   const [imageUrl, setImageUrl] = useState("");
-  const [editingItem, setEditingItem] = useState(null); // { original, index }
+  const [editingItem, setEditingItem] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState({
     visible: false,
     type: null,
     payload: null,
   });
 
-  // Cancel helpers
   const cancelCategoryEdit = () => {
     setEditingCategory(null);
     setEditingCategoryName("");
@@ -55,7 +53,6 @@ export default function AdminPanelFirebase() {
     setSelectedCatId("");
   };
 
-  // Auth check
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (!user) {
@@ -65,7 +62,6 @@ export default function AdminPanelFirebase() {
     return () => unsubscribe();
   }, []);
 
-  // Logout
   const handleLogout = async () => {
     try {
       await signOut(auth);
@@ -75,7 +71,6 @@ export default function AdminPanelFirebase() {
     }
   };
 
-  // Load menu
   const loadMenu = async () => {
     const snapshot = await getDocs(menuRef);
     const data = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
@@ -87,7 +82,6 @@ export default function AdminPanelFirebase() {
     loadMenu();
   }, []);
 
-  // Normalize order
   const normalizeCategoryOrder = async () => {
     const sortedMenu = [...menu].sort((a, b) => (a.order ?? 999) - (b.order ?? 999));
     await Promise.all(
@@ -98,7 +92,6 @@ export default function AdminPanelFirebase() {
     loadMenu();
   };
 
-  // -- Category handlers --
   const addCategory = async () => {
     if (!category) return;
     const highestOrder = menu.reduce((max, sec) => Math.max(max, sec.order ?? 0), 0);
@@ -160,7 +153,6 @@ export default function AdminPanelFirebase() {
     setTimeout(loadMenu, 400);
   };
 
-  // -- Item handlers --
   const addItem = async () => {
     if ((!itemNameHy && !itemNameEn) || !itemPrice || !selectedCatId) return;
     const ref = doc(db, "menu", selectedCatId);
@@ -253,40 +245,19 @@ export default function AdminPanelFirebase() {
     <div className="admin-panel">
       <h2>Admin Panel</h2>
 
-      {/* Top actions */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 12, flexWrap: "wrap" }}>
-        <button
-          onClick={handleLogout}
-          style={{
-            padding: "8px 16px",
-            background: "#f44336",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
-          title="Logout"
-        >
+      <div className="top-actions">
+        <button onClick={handleLogout} className="logout-btn" title="Logout">
           Logout
         </button>
-
         <button
           onClick={normalizeCategoryOrder}
-          style={{
-            padding: "8px 16px",
-            background: "#4a60e2",
-            color: "#fff",
-            border: "none",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+          className="normalize-btn"
           title="Normalize category order"
         >
           Կարգավորել կարգը
         </button>
       </div>
 
-      {/* Category creation / edit form (separate top form) */}
       <CategoryForm
         category={category}
         categoryIconUrl={categoryIconUrl}
@@ -305,7 +276,6 @@ export default function AdminPanelFirebase() {
 
       <hr />
 
-      {/* Item top form (add new) */}
       <ItemForm
         menu={menu}
         selectedCatId={selectedCatId}
@@ -326,151 +296,95 @@ export default function AdminPanelFirebase() {
 
       <hr />
 
-      {/* Categories + Items list with inline editors */}
-      {menu.map((sec, index) => (
-        <div key={sec.id} style={{ marginBottom: 18 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1 }}>
-              {sec.iconUrl && (
-                <img
-                  src={sec.iconUrl}
-                  alt={`${sec.category} icon`}
-                  style={{ width: 28, height: 28, objectFit: "contain", borderRadius: 6 }}
-                />
-              )}
-              <h3 style={{ margin: 0 }}>{sec.category}</h3>
+      <div className="category-list">
+        {menu.map((sec, index) => (
+          <div key={sec.id}>
+            <div className="category-header">
+              <div className="category-header-left">
+                {sec.iconUrl && <img src={sec.iconUrl} alt={`${sec.category} icon`} />}
+                <h3>{sec.category}</h3>
+              </div>
+
+              <div className="reorder-buttons">
+                <ActionButton onAction={() => moveCategoryUp(index)} disabled={index === 0}>
+                  ⬆
+                </ActionButton>
+                <ActionButton
+                  onAction={() => moveCategoryDown(index)}
+                  disabled={index === menu.length - 1}
+                >
+                  ⬇
+                </ActionButton>
+                <ActionButton onAction={() => startEditingCategory(sec)}>✏️</ActionButton>
+                <ActionButton onAction={() => askDeleteCategory(sec.id)}>❌</ActionButton>
+              </div>
             </div>
 
-            <div className="reorder-buttons" style={{ display: "flex", gap: 6 }}>
-              <ActionButton onAction={() => moveCategoryUp(index)} disabled={index === 0}>
-                ⬆
-              </ActionButton>
-              <ActionButton
-                onAction={() => moveCategoryDown(index)}
-                disabled={index === menu.length - 1}
-              >
-                ⬇
-              </ActionButton>
-              <ActionButton
-                onAction={() => {
-                  // Open inline category editor for this category
-                  startEditingCategory(sec);
-                }}
-              >
-                ✏️
-              </ActionButton>
-              <ActionButton onAction={() => askDeleteCategory(sec.id)}>❌</ActionButton>
-            </div>
-          </div>
-
-          {/* Inline Category Editor (appears under category header) */}
-          {editingCategory?.id === sec.id && (
-            <div className="inline-editor" style={{ marginTop: 10 }}>
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+            {editingCategory?.id === sec.id && (
+              <div className="inline-editor">
                 <input
                   type="text"
                   value={editingCategoryName}
                   onChange={(e) => setEditingCategoryName(e.target.value)}
                   placeholder="Category name"
-                  style={{ flex: 1 }}
                 />
                 <input
                   type="text"
                   value={editingCategoryIconUrl}
                   onChange={(e) => setEditingCategoryIconUrl(e.target.value)}
                   placeholder="Icon URL"
-                  style={{ flex: 1 }}
                 />
+                <div>
+                  <button onClick={editCategory}>Պահպանել</button>
+                  <button onClick={cancelCategoryEdit} className="cancel-btn">
+                    Չեղարկել
+                  </button>
+                </div>
               </div>
-              <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                <button onClick={editCategory} style={{ padding: "8px 12px" }}>
-                  Պահպանել
-                </button>
-                <button onClick={cancelCategoryEdit} className="cancel-btn" style={{ padding: "8px 12px" }}>
-                  Չեղարկել
-                </button>
-              </div>
-            </div>
-          )}
+            )}
 
-          <ul style={{ listStyle: "none", padding: 0, marginTop: 12 }}>
-            {(sec.items || []).map((item, idx) => {
-              const itemKey = `${sec.id}-${idx}-${(item.nameEn || item.nameHy || "").replace(/\s+/g, "_")}`;
-              const isEditingThisItem = editingItem && editingItem.index === idx && selectedCatId === sec.id;
+            <ul>
+              {(sec.items || []).map((item, idx) => {
+                const itemKey = `${sec.id}-${idx}-${(item.nameEn || item.nameHy || "").replace(
+                  /\s+/g,
+                  "_"
+                )}`;
+                const isEditingThisItem =
+                  editingItem && editingItem.index === idx && selectedCatId === sec.id;
 
-              return (
-                <li
-                  key={itemKey}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 12,
-                    marginBottom: 10,
-                    padding: 10,
-                    borderRadius: 8,
-                    background: "#fff",
-                    boxShadow: "0 2px 6px rgba(0,0,0,0.04)",
-                    flexDirection: "column",
-                 
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                    {item.imageUrl ? (
-                      <img
-                        src={item.imageUrl}
-                        alt=""
-                        style={{ width: 56, height: 56, objectFit: "cover", borderRadius: 8 }}
-                      />
-                    ) : (
-                      <div
-                        style={{
-                          width: 56,
-                          height: 56,
-                          borderRadius: 8,
-                          background: "#f0f0f0",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          color: "#888",
-                          fontSize: 12,
-                        }}
-                      >
-                        no image
+                return (
+                  <li key={itemKey}>
+                    <div className="item-row">
+                      {item.imageUrl ? (
+                        <img src={item.imageUrl} alt="" />
+                      ) : (
+                        <div className="item-placeholder">no image</div>
+                      )}
+
+                      <div className="item-text">
+                        <div className="name">
+                          {item.nameEn || "—"} / {item.nameHy || "—"}
+                        </div>
+                        <div className="price">{item.price} ֏</div>
                       </div>
-                    )}
 
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 600 }}>
-                        {item.nameEn || "—"} / {item.nameHy || "—"}
+                      <div className="item-actions">
+                        <ActionButton onAction={() => moveItemUp(sec.id, idx)} disabled={idx === 0}>
+                          ⬆
+                        </ActionButton>
+                        <ActionButton
+                          onAction={() => moveItemDown(sec.id, idx)}
+                          disabled={idx === (sec.items?.length ?? 1) - 1}
+                        >
+                          ⬇
+                        </ActionButton>
+                        <ActionButton onAction={() => startEditingItem(sec.id, item, idx)}>✏️</ActionButton>
+                        <ActionButton onAction={() => askDeleteItem(sec.id, item)}>🗑</ActionButton>
                       </div>
-                      <div style={{ color: "#666", marginTop: 4 }}>{item.price} ֏</div>
                     </div>
 
-                    <div style={{ display: "flex", gap: 6 }}>
-                      <ActionButton onAction={() => moveItemUp(sec.id, idx)} disabled={idx === 0}>
-                        ⬆
-                      </ActionButton>
-                      <ActionButton
-                        onAction={() => moveItemDown(sec.id, idx)}
-                        disabled={idx === (sec.items?.length ?? 1) - 1}
-                      >
-                        ⬇
-                      </ActionButton>
-                      <ActionButton
-                        onAction={() => {
-                          startEditingItem(sec.id, item, idx);
-                        }}
-                      >
-                        ✏️
-                      </ActionButton>
-                      <ActionButton onAction={() => askDeleteItem(sec.id, item)}>🗑</ActionButton>
-                    </div>
-                  </div>
-
-                  {/* Inline Item Editor (appears below the item row) */}
-                  {isEditingThisItem && (
-                    <div className="inline-editor item-editor" style={{ marginTop: 10 }}>
-                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                    {isEditingThisItem && (
+                      <div className="inline-editor item-editor">
                         <input
                           type="text"
                           value={itemNameEn}
@@ -495,24 +409,21 @@ export default function AdminPanelFirebase() {
                           onChange={(e) => setImageUrl(e.target.value)}
                           placeholder="Image URL"
                         />
+                        <div>
+                          <button onClick={editItem}>Պահպանել</button>
+                          <button onClick={cancelItemEdit} className="cancel-btn">
+                            Չեղարկել
+                          </button>
+                        </div>
                       </div>
-
-                      <div style={{ marginTop: 8, display: "flex", gap: 8 }}>
-                        <button onClick={editItem} style={{ padding: "8px 12px" }}>
-                          Պահպանել
-                        </button>
-                        <button onClick={cancelItemEdit} className="cancel-btn" style={{ padding: "8px 12px" }}>
-                          Չեղարկել
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        </div>
-      ))}
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
 
       {confirmDelete.visible && (
         <ConfirmModal
