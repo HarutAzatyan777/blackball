@@ -1,6 +1,6 @@
 import React from "react";
 import { Route, Navigate } from "react-router-dom";
-import MenuPage from "./components/QrMenuPage";
+// import MenuPage from "./components/QrMenuPage";
 import AdminPanelFirebase from "./components/AdminPanelFirebase";
 import LoginForm from "./components/LoginForm";
 import ConnectSupport from "./components/ConnectSupport";
